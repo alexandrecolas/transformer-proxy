@@ -33,7 +33,6 @@ module.exports = function transformerProxy(transformerFunction, options) {
   var identity = function(data) { return data };
 
   return function transformerProxy(req, res, next) {
-
     var identityOrTransformer = transformerFunction;
     if (options.match && !options.match.test(req.url)) {
       identityOrTransformer = identity;
@@ -62,13 +61,13 @@ module.exports = function transformerProxy(transformerFunction, options) {
     });
 
     res.writeHead = function (code, headers) {
-        if(options.contentType){
-          res.setHeader('content-type', options.contentType);
-        }
+      if(options.contentType && code.toString().charAt(0) == 2){
+        res.setHeader('content-type', options.contentType);
+      }
 
-        res.removeHeader('Content-Length');
-        if (headers) { delete headers['content-length']; }
-        resWriteHead.apply(null, arguments);
+      res.removeHeader('Content-Length');
+      if (headers) { delete headers['content-length']; }
+      resWriteHead.apply(null, arguments);
     };
 
     next();
