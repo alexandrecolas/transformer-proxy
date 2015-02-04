@@ -62,6 +62,10 @@ module.exports = function transformerProxy(transformerFunction, options) {
     });
 
     res.writeHead = function (code, headers) {
+        if(options.contentType){
+          res.setHeader('content-type', options.contentType);
+        }
+
         res.removeHeader('Content-Length');
         if (headers) { delete headers['content-length']; }
         resWriteHead.apply(null, arguments);
